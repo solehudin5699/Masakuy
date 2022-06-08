@@ -1,14 +1,20 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:masak_apa/models/recipes.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 
 class DetailRecipe extends StatefulWidget{
   final String thumb;
   final String keyMenu;
   final String title;
+  
   const DetailRecipe({Key? key,required this.thumb,required this.keyMenu,required this.title}) : super(key: key);
 
   @override
@@ -17,6 +23,17 @@ class DetailRecipe extends StatefulWidget{
 }
 class _DetailRecipe extends State<DetailRecipe>{
   late Future<DetailRecipeModel> detailRecipe;
+  ScreenshotController screenshotController = ScreenshotController();
+
+  void share()async{
+    final imageFile = await screenshotController.capture(delay: const Duration(milliseconds: 10));
+    if(imageFile!=null){
+      final directory = await getApplicationDocumentsDirectory();
+      final imagePath = await File('${directory.path}/image_recipe.png').create();
+      await imagePath.writeAsBytes(imageFile);
+      await Share.shareFiles([imagePath.path]);
+    }
+  }
 
   @override
   void initState(){
@@ -61,13 +78,43 @@ class _DetailRecipe extends State<DetailRecipe>{
             ),
             actions: [
               IconButton(
-                onPressed: (){}, 
-                icon: const Icon(Icons.share,color: Colors.white,)
+                tooltip: 'Bagikan resep',
+                onPressed: (){share();}, 
+                icon: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color.fromARGB(255, 119, 18, 214).withOpacity(0.7),
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      width: 0.5,
+                    )
+                  ),
+                  child: const Center(
+                    child: Icon(Icons.share,color: Colors.white,),
+                  )
+                )
               ),
               IconButton(
+                tooltip: 'Tambahkan ke favorit',
                 onPressed: (){}, 
-                icon: const Icon(Icons.favorite_outline,color: Colors.white,)
-              )
+                icon: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color.fromARGB(255, 119, 18, 214).withOpacity(0.7),
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      width: 0.5,
+                    )
+                  ),
+                  child: const Center(
+                    child: Icon(Icons.favorite_outline,color: Colors.white,)
+                  )
+                )
+              ),
             ],
             flexibleSpace: Container(
               decoration: BoxDecoration(
@@ -137,9 +184,25 @@ class _DetailRecipe extends State<DetailRecipe>{
                         needItem:snapshot.data!.needItem,
                         ingredient:snapshot.data!.ingredient,
                         step: snapshot.data!.step,
-                        thumb:widget.thumb
+                        thumb:widget.thumb,
+                        screenshotController: screenshotController,
                       );
                     }
+                  } else if (snapshot.hasError) {
+                    return const SizedBox(
+                      height: 300,
+                      width: double.infinity,
+                      child: Center(
+                        child: Text(
+                          'Terjadi kesalahan',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Color.fromARGB(255, 119, 18, 214)
+                          ),
+                        ),
+                      ),
+                    );
                   }
 
                   // default
@@ -175,6 +238,7 @@ class DetailContent extends StatelessWidget{
   final List<dynamic> ingredient;
   final List<dynamic> step;
   final String thumb;
+  final ScreenshotController screenshotController;
   const DetailContent({
     Key? key,
     required this.title,
@@ -185,88 +249,96 @@ class DetailContent extends StatelessWidget{
     required this.desc,
     required this.needItem,
     required this.ingredient,
-    required this.step,required this.thumb,}) : super(key: key);
+    required this.step,
+    required this.thumb,
+    required this.screenshotController
+    }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(title,style: const TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
-          Row(
-            children: [
-              const Icon(Icons.person,size: 12,),
-              const SizedBox(width: 3,),
-              Text(
-                'Author : ${author["user"]}',
-                style: const TextStyle(
-                  fontStyle: FontStyle.italic,
+    return Screenshot(
+      controller: screenshotController,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(255, 247, 247, 247)
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(title,style: const TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
+            Row(
+              children: [
+                const Icon(Icons.person,size: 12,),
+                const SizedBox(width: 3,),
+                Text(
+                  'Author : ${author["user"]}',
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15,),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10), 
-            child: Image.network(
-              thumb,
-              fit: BoxFit.cover,
-              errorBuilder: (context,error,strakTrace){
-                return Container(
-                  color: const Color.fromARGB(255, 157, 157, 204),
-                  alignment: Alignment.center,
-                  child: const Icon(Icons.image_outlined),
-                );
-              },
+              ],
             ),
-          ),
-          const SizedBox(height: 15,),
-          ExpandableText(
-            desc,
-            expandText: 'Selengkapnya',
-            collapseText: 'Sembunyikan',
-            maxLines: 5,
-            linkColor: const Color.fromARGB(255, 59, 62, 255),
-            linkStyle: const TextStyle(fontWeight: FontWeight.w600),
-            textAlign: TextAlign.justify,
-            animation: true,
-            animationCurve: Curves.easeIn,
-            collapseOnTextTap: true,
-            prefixText: 'Deskripsi : ',
-            prefixStyle: const TextStyle(fontWeight: FontWeight.w600,),
-          ),
-          const SizedBox(height: 15,),
-          const Text(
-          "Bahan-bahan : ",
-          style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),textAlign: TextAlign.left,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: ingredient.map((e) => Text('⨀  $e')).toList(),
-          ),
-          const SizedBox(height: 15,),
-          const Text(
-          "Bahan khusus : ",
-          style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),textAlign: TextAlign.left,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: needItem.map((e) => Text('⨀  ${e["item_name"]}')).toList(),
-          ),
-          const SizedBox(height: 15,),
-          const Text(
-          "Langkah-langkah : ",
-          style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),textAlign: TextAlign.left,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: step.map((e) => Text(e)).toList(),
-          ),
-        ],
+            const SizedBox(height: 15,),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10), 
+              child: Image.network(
+                thumb,
+                fit: BoxFit.cover,
+                errorBuilder: (context,error,strakTrace){
+                  return Container(
+                    color: const Color.fromARGB(255, 157, 157, 204),
+                    alignment: Alignment.center,
+                    child: const Icon(Icons.image_outlined),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 15,),
+            ExpandableText(
+              desc,
+              expandText: 'Selengkapnya',
+              collapseText: 'Sembunyikan',
+              maxLines: 5,
+              linkColor: const Color.fromARGB(255, 59, 62, 255),
+              linkStyle: const TextStyle(fontWeight: FontWeight.w600),
+              textAlign: TextAlign.justify,
+              animation: true,
+              animationCurve: Curves.easeIn,
+              collapseOnTextTap: true,
+              prefixText: 'Deskripsi : ',
+              prefixStyle: const TextStyle(fontWeight: FontWeight.w600,),
+            ),
+            const SizedBox(height: 15,),
+            const Text(
+            "Bahan-bahan : ",
+            style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),textAlign: TextAlign.left,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: ingredient.map((e) => Text('⨀  $e')).toList(),
+            ),
+            const SizedBox(height: 15,),
+            const Text(
+            "Bahan khusus : ",
+            style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),textAlign: TextAlign.left,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: needItem.map((e) => Text('⨀  ${e["item_name"]}')).toList(),
+            ),
+            const SizedBox(height: 15,),
+            const Text(
+            "Langkah-langkah : ",
+            style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),textAlign: TextAlign.left,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: step.map((e) => Text(e)).toList(),
+            ),
+          ],
+        ),
       ),
     );
   }
-  
 }
