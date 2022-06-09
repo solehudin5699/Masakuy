@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:masak_apa/elements/card_recipe.dart';
 import 'package:masak_apa/models/recipes.dart';
 import 'package:masak_apa/screens/detail_recipe.dart';
+import 'package:masak_apa/elements/loading_indicator.dart';
 
 
 class Home extends StatefulWidget{
@@ -60,7 +61,7 @@ class _Home extends State<Home>{
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text('Masakuy',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30)),
-                Text('Cari resep masakan yuk',style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14)),
+                Text('Keluar buat makan? Mending masak sendiri aja',style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14)),
               ]
             ),
             actions: [
@@ -104,7 +105,7 @@ class _Home extends State<Home>{
                     controller: _controllerKeyword,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText:'Cari masakan',
+                      hintText:'Cari resep masakan',
                       prefixIcon:const Icon(Icons.search),
                       suffixIcon: !isSearchBarFocus.hasPrimaryFocus?IconButton(
                         icon: const Icon(Icons.clear),
@@ -128,79 +129,63 @@ class _Home extends State<Home>{
           SliverList(
             delegate: SliverChildListDelegate([
               FutureBuilder<RecipesModel>(
-            future: listRecipes,
-            builder: (context, snapshot) {
-              if(snapshot.connectionState==ConnectionState.waiting){
-                return const SizedBox(
-                  height: 300,
-                  width: double.infinity,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: Color.fromARGB(255, 119, 18, 214),
-                    ),
-                  )
-                );
-              }else if (snapshot.hasData) {
-                if(snapshot.data!.recipes.isNotEmpty){
-                  return Column(
-                  children: snapshot.data!.recipes.map((e) => CardRecipe(data:e,navigator: ()=>Navigator.of(context).push(createRoute(thumb:e['thumb'],keyMenu: e['key'],title:e['title'])),)).toList(),
-                );
-                }else{
-                  return SizedBox(
-                    height: 300,
-                    width: double.infinity,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
-                          Icon(
-                            Icons.indeterminate_check_box_outlined,size: 50,
-                            color: Color.fromARGB(255, 119, 18, 214),
+                future: listRecipes,
+                builder: (context, snapshot) {
+                  if(snapshot.connectionState==ConnectionState.waiting){
+                    return const LoadingIndicator();
+                  }else if (snapshot.hasData) {
+                    if(snapshot.data!.recipes.isNotEmpty){
+                      return Column(
+                      children: snapshot.data!.recipes.map((e) => CardRecipe(data:e,navigator: ()=>Navigator.of(context).push(createRoute(thumb:e['thumb'],keyMenu: e['key'],title:e['title'])),)).toList(),
+                    );
+                    }else{
+                      return SizedBox(
+                        height: 300,
+                        width: double.infinity,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: const [
+                              Icon(
+                                Icons.indeterminate_check_box_outlined,size: 50,
+                                color: Color.fromARGB(255, 119, 18, 214),
+                              ),
+                              Text(
+                                'Pencarian tidak ditemukan',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color.fromARGB(255, 119, 18, 214)
+                                ),
+                              ),
+                            ],
+                          )
+                        )
+                      );
+                    }
+                    
+                  } else if (snapshot.hasError) {
+                    return const SizedBox(
+                      height: 300,
+                      width: double.infinity,
+                      child: Center(
+                        child: Text(
+                          'Terjadi kesalahan',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Color.fromARGB(255, 119, 18, 214)
                           ),
-                          Text(
-                            'Pencarian tidak ditemukan',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Color.fromARGB(255, 119, 18, 214)
-                            ),
-                          ),
-                        ],
-                      )
-                    )
-                  );
-                }
-                
-              } else if (snapshot.hasError) {
-                return const SizedBox(
-                  height: 300,
-                  width: double.infinity,
-                  child: Center(
-                    child: Text(
-                      'Terjadi kesalahan',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Color.fromARGB(255, 119, 18, 214)
+                        ),
                       ),
-                    ),
-                  ),
-                );
-              }
+                    );
+                  }
 
-              // By default, show a loading spinner.
-              return const SizedBox(
-                height: 300,
-                width: double.infinity,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: Color.fromARGB(255, 119, 18, 214)
-                  ),
-                )
-              );
-            },
-          ),
+                  // By default, show a loading spinner.
+                  return const LoadingIndicator();
+                },
+              ),
             ]
             ),
           )

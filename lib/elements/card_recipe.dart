@@ -14,7 +14,7 @@ class CardRecipe extends StatelessWidget{
       clipBehavior: Clip.none,
       elevation: 5,
       child: InkWell(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(10),
         focusColor: Colors.blue,
         onTap: ()=>navigator(),
         child: Column(
@@ -35,7 +35,7 @@ class CardRecipe extends StatelessWidget{
                       errorBuilder: (context,error,strakTrace){
                         return Container(
                           color: const Color.fromARGB(255, 157, 157, 204),
-                          child: const Icon(Icons.image_outlined),
+                          child: const Icon(Icons.image_not_supported_outlined),
                         );
                       },
                     ),
@@ -53,24 +53,24 @@ class CardRecipe extends StatelessWidget{
                         shape: BoxShape.circle,
                         color: Colors.white.withOpacity(0.3),
                         border: Border.all(
-                          color: const Color.fromARGB(255, 29, 163, 11),
+                          color: const Color.fromARGB(255, 119, 18, 214),
                           width: 1,
                         )
                       ),
                       child: IconButton(
+                        focusColor: const Color.fromARGB(255, 119, 18, 214),
                         iconSize: 25,
                         onPressed: (){}, 
-                        icon: const Icon(Icons.favorite,color:Color.fromARGB(255, 29, 163, 11) ,)
+                        icon: const Icon(Icons.favorite,color:Color.fromARGB(255, 119, 18, 214) ,)
                       ),
                     ),
                   ),
-                ),              
+                ),
               ],
             ),
             
             Container(
               decoration: const BoxDecoration(
-                color: Colors.white,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(10.0),
                   bottomRight: Radius.circular(10.0),
@@ -82,10 +82,10 @@ class CardRecipe extends StatelessWidget{
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text("${data['title']}",style: const TextStyle(fontWeight: FontWeight.w500,fontSize: 16,color: Color.fromARGB(255, 19, 124, 5)),),
+                    Text("${data['title']}",style: const TextStyle(fontWeight: FontWeight.w500,fontSize: 16,color: Color.fromARGB(255, 59, 62, 255)),),
                   ],
                 ),
-              )
+              ),
             )
           ],              
         ),
