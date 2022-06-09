@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:masak_apa/elements/card_recipe.dart';
+import 'package:masak_apa/elements/error_message.dart';
 import 'package:masak_apa/models/recipes.dart';
 import 'package:masak_apa/screens/detail_recipe.dart';
 import 'package:masak_apa/elements/loading_indicator.dart';
@@ -166,23 +167,8 @@ class _Home extends State<Home>{
                     }
                     
                   } else if (snapshot.hasError) {
-                    return const SizedBox(
-                      height: 300,
-                      width: double.infinity,
-                      child: Center(
-                        child: Text(
-                          'Terjadi kesalahan',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Color.fromARGB(255, 119, 18, 214)
-                          ),
-                        ),
-                      ),
-                    );
+                    return const ErrorMessage(message: 'Terjadi kesalahan',);
                   }
-
-                  // By default, show a loading spinner.
                   return const LoadingIndicator();
                 },
               ),
