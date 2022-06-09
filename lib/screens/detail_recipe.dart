@@ -1,10 +1,9 @@
-// ignore_for_file: depend_on_referenced_packages
-
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:expandable_text/expandable_text.dart';
+import 'package:masak_apa/elements/detail_content_recipe.dart';
+import 'package:masak_apa/elements/error_message.dart';
+import 'package:masak_apa/elements/loading_indicator.dart';
 import 'package:masak_apa/models/recipes.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -163,15 +162,7 @@ class _DetailRecipe extends State<DetailRecipe>{
                 future: detailRecipe,
                 builder:(context,snapshot){
                   if(snapshot.connectionState==ConnectionState.waiting){
-                    return const SizedBox(
-                      height: 300,
-                      width: double.infinity,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: Color.fromARGB(255, 119, 18, 214),
-                        ),
-                      )
-                    );
+                    return const LoadingIndicator();
                   }else if(snapshot.hasData){
                     if(snapshot.data!.title!=''){
                       return DetailContent(
@@ -189,155 +180,15 @@ class _DetailRecipe extends State<DetailRecipe>{
                       );
                     }
                   } else if (snapshot.hasError) {
-                    return const SizedBox(
-                      height: 300,
-                      width: double.infinity,
-                      child: Center(
-                        child: Text(
-                          'Terjadi kesalahan',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Color.fromARGB(255, 119, 18, 214)
-                          ),
-                        ),
-                      ),
-                    );
+                    return const ErrorMessage(message: 'Terjadi kesalahan',);
                   }
-
-                  // default
-                  return const SizedBox(
-                    height: 300,
-                    width: double.infinity,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: Color.fromARGB(255, 119, 18, 214)
-                      ),
-                    )
-                  );
+                  return const LoadingIndicator();
                 }
               ),
               
             ])
           )
         ]
-      ),
-      );
-    
-  }
-}
-
-class DetailContent extends StatelessWidget{
-  final String title;
-  final String servings;
-  final String times;
-  final String dificulty;
-  final Map<String,dynamic> author;
-  final String desc;
-  final List<dynamic> needItem;
-  final List<dynamic> ingredient;
-  final List<dynamic> step;
-  final String thumb;
-  final ScreenshotController screenshotController;
-  const DetailContent({
-    Key? key,
-    required this.title,
-    required this.servings,
-    required this.times,
-    required this.dificulty,
-    required this.author,
-    required this.desc,
-    required this.needItem,
-    required this.ingredient,
-    required this.step,
-    required this.thumb,
-    required this.screenshotController
-    }) : super(key: key);
-  
-  @override
-  Widget build(BuildContext context) {
-    return Screenshot(
-      controller: screenshotController,
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Color.fromARGB(255, 247, 247, 247)
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(title,style: const TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
-            Row(
-              children: [
-                const Icon(Icons.person,size: 12,),
-                const SizedBox(width: 3,),
-                Text(
-                  'Author : ${author["user"]}',
-                  style: const TextStyle(
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 15,),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10), 
-              child: Image.network(
-                thumb,
-                fit: BoxFit.cover,
-                errorBuilder: (context,error,strakTrace){
-                  return Container(
-                    color: const Color.fromARGB(255, 157, 157, 204),
-                    alignment: Alignment.center,
-                    child: const Icon(Icons.image_outlined),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 15,),
-            ExpandableText(
-              desc,
-              expandText: 'Selengkapnya',
-              collapseText: 'Sembunyikan',
-              maxLines: 5,
-              linkColor: const Color.fromARGB(255, 59, 62, 255),
-              linkStyle: const TextStyle(fontWeight: FontWeight.w600),
-              textAlign: TextAlign.justify,
-              animation: true,
-              animationCurve: Curves.easeIn,
-              collapseOnTextTap: true,
-              prefixText: 'Deskripsi : ',
-              prefixStyle: const TextStyle(fontWeight: FontWeight.w600,),
-            ),
-            const SizedBox(height: 15,),
-            const Text(
-            "Bahan-bahan : ",
-            style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),textAlign: TextAlign.left,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: ingredient.map((e) => Text('⨀  $e')).toList(),
-            ),
-            const SizedBox(height: 15,),
-            const Text(
-            "Bahan khusus : ",
-            style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),textAlign: TextAlign.left,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: needItem.map((e) => Text('⨀  ${e["item_name"]}')).toList(),
-            ),
-            const SizedBox(height: 15,),
-            const Text(
-            "Langkah-langkah : ",
-            style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),textAlign: TextAlign.left,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: step.map((e) => Text(e)).toList(),
-            ),
-          ],
-        ),
       ),
     );
   }
