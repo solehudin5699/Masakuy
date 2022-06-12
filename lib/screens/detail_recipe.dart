@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:masak_apa/blocs/bloc_export.dart';
 import 'package:masak_apa/elements/detail_content_recipe.dart';
 import 'package:masak_apa/elements/error_message.dart';
 import 'package:masak_apa/elements/loading_indicator.dart';
+import 'package:masak_apa/models/favorite_recipe.dart';
 import 'package:masak_apa/models/recipes.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -95,25 +97,35 @@ class _DetailRecipe extends State<DetailRecipe>{
                   )
                 )
               ),
-              IconButton(
-                tooltip: 'Tambahkan ke favorit',
-                onPressed: (){}, 
-                icon: Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color.fromARGB(255, 119, 18, 214).withOpacity(0.7),
-                    border: Border.all(
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      width: 0.5,
+              BlocBuilder<FavoriteRecipeBloc,FavoriteRecipeState>(
+                builder: (context,state){
+
+                  FavoriteRecipeModel currentRecipe = FavoriteRecipeModel(keyRecipe: widget.keyMenu,title: widget.title,thumb: widget.thumb);
+                  bool isFavorited = state.favoriteRecipes.any((element) => element.keyRecipe==widget.keyMenu);
+                  
+                  return IconButton(
+                    tooltip: isFavorited?"Hapus dari favorit":'Tambahkan ke favorit',
+                    onPressed: (){
+                      context.read<FavoriteRecipeBloc>().add(UpdateFavoriteRecipe(recipe: currentRecipe));
+                    }, 
+                    icon: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color.fromARGB(255, 119, 18, 214).withOpacity(0.7),
+                        border: Border.all(
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          width: 0.5,
+                        )
+                      ),
+                      child: Center(
+                        child: Icon(isFavorited?Icons.favorite:Icons.favorite_outline,color: Colors.white,)
+                      )
                     )
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.favorite_outline,color: Colors.white,)
-                  )
-                )
-              ),
+                  );
+                }
+              )
             ],
             flexibleSpace: Container(
               decoration: BoxDecoration(
