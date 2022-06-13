@@ -72,7 +72,7 @@ packages:
     source: hosted
     version: "2.0.3"
   expandable_text:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: expandable_text
       url: "https://pub.dartlang.org"
@@ -118,6 +118,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  flutter_staggered_grid_view:
+    dependency: "direct main"
+    description:
+      name: flutter_staggered_grid_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter

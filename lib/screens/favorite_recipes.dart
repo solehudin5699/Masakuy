@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:masak_apa/blocs/bloc_export.dart';
 import 'package:masak_apa/elements/card_recipe.dart';
 import 'package:masak_apa/screens/detail_recipe.dart';
@@ -7,6 +8,17 @@ import 'package:masak_apa/utils/screen_transition.dart';
 class FavoriteRecipes extends StatelessWidget {
   const FavoriteRecipes({Key? key}) : super(key: key);
 
+  int _generateCrossAxisCount(double maxWidth){
+    if(maxWidth<=600){
+      return 1;
+    }else if(maxWidth<=900){
+      return 2;
+    }else if(maxWidth<=1200){
+      return 3;
+    }else{
+      return 4;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,17 +69,24 @@ class FavoriteRecipes extends StatelessWidget {
           final favoriteRecipes = state.favoriteRecipes;
           return LayoutBuilder(
             builder: (BuildContext context,BoxConstraints constraints) {
-              return ListView(
-                children: favoriteRecipes.map((e) => CardRecipe(
-                  data: {
-                    "key":e.keyRecipe,
-                    "title":e.title,
-                    "thumb":e.thumb
-                  },
-                  navigator: ()async{
-                    await screenTransition(context, screen: DetailRecipe(thumb:e.thumb,keyMenu: e.keyRecipe,title:e.title));
-                  }
-                )).toList(),
+
+              return MasonryGridView.count(
+                itemCount: favoriteRecipes.length,
+                crossAxisCount: _generateCrossAxisCount(constraints.maxWidth),
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+                itemBuilder: (context, index) {
+                  return CardRecipe(
+                    data: {
+                      "key":favoriteRecipes[index].keyRecipe,
+                      "title":favoriteRecipes[index].title,
+                      "thumb":favoriteRecipes[index].thumb,
+                    },
+                    navigator: ()async{
+                      await screenTransition(context, screen: DetailRecipe(thumb:favoriteRecipes[index].thumb,keyMenu: favoriteRecipes[index].keyRecipe,title:favoriteRecipes[index].title));
+                    }
+                  );
+                },
               );
             }
           );
