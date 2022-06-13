@@ -5,6 +5,8 @@ import 'package:masak_apa/elements/error_message.dart';
 import 'package:masak_apa/models/recipes.dart';
 import 'package:masak_apa/screens/detail_recipe.dart';
 import 'package:masak_apa/elements/loading_indicator.dart';
+import 'package:masak_apa/screens/favorite_recipes.dart';
+import 'package:masak_apa/utils/screen_transition.dart';
 
 
 class Home extends StatefulWidget{
@@ -67,7 +69,9 @@ class _Home extends State<Home>{
             ),
             actions: [
               IconButton(
-                onPressed: (()=>{}),
+                onPressed: ()async{
+                  await screenTransition(context, screen: const FavoriteRecipes());
+                },
                 icon: const Icon(Icons.favorite_outline, color: Colors.white)
               )
             ],
@@ -137,8 +141,11 @@ class _Home extends State<Home>{
                   }else if (snapshot.hasData) {
                     if(snapshot.data!.recipes.isNotEmpty){
                       return Column(
-                      children: snapshot.data!.recipes.map((e) => CardRecipe(data:e,navigator: ()=>Navigator.of(context).push(createRoute(thumb:e['thumb'],keyMenu: e['key'],title:e['title'])),)).toList(),
-                    );
+                      children: snapshot.data!.recipes.map((e) => CardRecipe(data:e,navigator: ()async{
+                        await screenTransition(context, screen: DetailRecipe(thumb:e['thumb'],keyMenu: e['key'],title:e['title']));
+                        },
+                      )).toList(),
+                    ); 
                     }else{
                       return SizedBox(
                         height: 300,
@@ -179,22 +186,4 @@ class _Home extends State<Home>{
       ),
     );
   }
-}
-
-Route createRoute({required String thumb, required String keyMenu,required String title}) {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => DetailRecipe(thumb:thumb,keyMenu: keyMenu,title:title),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(1.0, 0.0);
-      const end = Offset.zero;
-      const curve = Curves.easeIn;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
-    },
-  );
 }
