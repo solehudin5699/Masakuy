@@ -63,8 +63,8 @@ class _Home extends State<Home>{
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                Text('Masakuy',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30)),
-                Text('Keluar buat makan? Mending masak sendiri aja',style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14)),
+                Text('Masakuy',style: TextStyle(fontWeight: FontWeight.w500,fontSize: 25,fontFamily: "Pacifico" )),
+                Text('Keluar buat makan? Mending masak sendiri aja',style: TextStyle(fontWeight: FontWeight.w400,fontSize: 12)),
               ]
             ),
             actions: [
