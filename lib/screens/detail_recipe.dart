@@ -65,7 +65,7 @@ class _DetailRecipe extends State<DetailRecipe>{
               width: 25,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.3),
+                color: const Color.fromARGB(255, 119, 18, 214).withOpacity(0.7),
                 border: Border.all(
                   color: const Color.fromARGB(255, 255, 255, 255),
                   width: 0.5,
