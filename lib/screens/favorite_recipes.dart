@@ -67,6 +67,22 @@ class FavoriteRecipes extends StatelessWidget {
         builder: (context,state){
           
           final favoriteRecipes = state.favoriteRecipes;
+          if(favoriteRecipes.isEmpty){
+            return Center(
+              child:Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: const Text(
+                  // overflow: TextOverflow.clip,
+                  'Belum ada resep masakan yang ditambahkan ke favorit', 
+                  style:TextStyle(
+                    fontSize: 16,
+                    color: Color.fromARGB(255, 119, 18, 214),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            );
+          }
           return LayoutBuilder(
             builder: (BuildContext context,BoxConstraints constraints) {
 
