@@ -4,8 +4,39 @@ import 'package:masak_apa/models/favorite_recipe.dart';
 class CardRecipe extends StatelessWidget{
   final Map data;
   final Function navigator;
-  const CardRecipe({Key? key,required this.data,required this.navigator}) : super(key: key);
+  final bool isShowRemoveButton;
+  const CardRecipe({Key? key,required this.data,required this.navigator,this.isShowRemoveButton=false}) : super(key: key);
 
+  void showConfirmModal(BuildContext context,Function callback){
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.delete_outline,color: Color.fromARGB(255, 119, 18, 214),),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Hapus dari favorit ?',style: TextStyle(color: Color.fromARGB(255, 119, 18, 214)),),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith((states) => const Color.fromARGB(255, 119, 18, 214)),
+                    ),
+                    onPressed: (){
+                      callback();
+                      Navigator.pop(context);
+                    }, 
+                    child: const Text('Hapus')
+                  )
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FavoriteRecipeBloc,FavoriteRecipeState>(
@@ -64,7 +95,16 @@ class CardRecipe extends StatelessWidget{
                               width: 1,
                             )
                           ),
-                          child: IconButton(
+                          child:isShowRemoveButton?
+                          IconButton(
+                            onPressed: (){
+                              showConfirmModal(
+                                context,
+                                (){context.read<FavoriteRecipeBloc>().add(RemoveFavoriteRecipe(recipe: currentRecipe));}
+                              );
+                            }, 
+                            icon: const Icon(Icons.delete_outline,color:Colors.white)) 
+                          :IconButton(
                             focusColor: const Color.fromARGB(255, 119, 18, 214),
                             iconSize: 25,
                             onPressed: (){

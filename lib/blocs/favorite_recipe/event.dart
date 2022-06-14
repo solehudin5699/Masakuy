@@ -14,3 +14,11 @@ class UpdateFavoriteRecipe extends FavoriteRecipeEvent{
   @override
   List<Object> get props => [recipe];
 }
+
+class RemoveFavoriteRecipe extends FavoriteRecipeEvent{
+  final FavoriteRecipeModel recipe;
+  const RemoveFavoriteRecipe({required this.recipe});
+
+  @override
+  List<Object> get props => [recipe];
+}

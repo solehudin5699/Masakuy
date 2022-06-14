@@ -84,7 +84,8 @@ class FavoriteRecipes extends StatelessWidget {
                     },
                     navigator: ()async{
                       await screenTransition(context, screen: DetailRecipe(thumb:favoriteRecipes[index].thumb,keyMenu: favoriteRecipes[index].keyRecipe,title:favoriteRecipes[index].title));
-                    }
+                    },
+                    isShowRemoveButton: true,
                   );
                 },
               );
@@ -95,3 +96,4 @@ class FavoriteRecipes extends StatelessWidget {
     );
   }
 }
+

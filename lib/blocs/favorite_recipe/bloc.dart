@@ -8,6 +8,7 @@ part 'state.dart';
 class FavoriteRecipeBloc extends HydratedBloc<FavoriteRecipeEvent, FavoriteRecipeState> {
   FavoriteRecipeBloc() : super(const FavoriteRecipeState()) {
     on<UpdateFavoriteRecipe>(_updateFavoriteRecipe);
+    on<RemoveFavoriteRecipe>(_removeFavoriteRecipe);
   }
 
   void _updateFavoriteRecipe(UpdateFavoriteRecipe event,Emitter<FavoriteRecipeState> emit){
@@ -30,6 +31,12 @@ class FavoriteRecipeBloc extends HydratedBloc<FavoriteRecipeEvent, FavoriteRecip
         emit(FavoriteRecipeState(favoriteRecipes: List.from(state.favoriteRecipes)..remove(recipe)));
       }
     }
+  }
+
+  void _removeFavoriteRecipe(RemoveFavoriteRecipe event,Emitter<FavoriteRecipeState> emit){
+    final state = this.state;
+    final recipe = event.recipe;
+    emit(FavoriteRecipeState(favoriteRecipes: List.from(state.favoriteRecipes)..remove(recipe)));
   }
   
   @override
