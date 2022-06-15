@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:masak_apa/blocs/bloc_export.dart';
 import 'package:masak_apa/models/favorite_recipe.dart';
+// ignore: must_be_immutable
 class CardRecipe extends StatelessWidget{
   final Map data;
   final Function navigator;
   final bool isShowRemoveButton;
-  const CardRecipe({Key? key,required this.data,required this.navigator,this.isShowRemoveButton=false}) : super(key: key);
+  Function onRemoveRecipe=(){};
+  CardRecipe({Key? key,required this.data,required this.navigator,this.isShowRemoveButton=false,Function? onRemoveRecipe}) : super(key: key){
+    this.onRemoveRecipe = onRemoveRecipe??this.onRemoveRecipe;
+  }
 
   void showConfirmModal(BuildContext context,Function callback){
     showModalBottomSheet(
@@ -26,6 +30,7 @@ class CardRecipe extends StatelessWidget{
                     onPressed: (){
                       callback();
                       Navigator.pop(context);
+                      onRemoveRecipe();
                     }, 
                     child: const Text('Hapus')
                   )
