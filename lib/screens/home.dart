@@ -119,7 +119,7 @@ class _HomeView extends State<HomeView>{
               controller: _controllerKeyword,
               decoration: InputDecoration(
                 border: InputBorder.none,
-                  hintText:'Cari resep masakan',
+                  hintText:'Cari resep di sini',
                   prefixIcon:const Icon(Icons.search),
                   suffixIcon: _keyword.isNotEmpty?IconButton(
                     icon: const Icon(Icons.clear),
