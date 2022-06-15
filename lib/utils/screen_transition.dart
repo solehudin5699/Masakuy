@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 Future<dynamic> screenTransition(BuildContext context,{required Widget screen}) {
   Route pageRouteBulder =  PageRouteBuilder(
-    transitionDuration: const Duration(seconds: 1),
-    reverseTransitionDuration: const Duration(seconds: 1),
+    transitionDuration: const Duration(milliseconds: 500),
+    reverseTransitionDuration: const Duration(milliseconds: 500),
     pageBuilder: (context, animation, secondaryAnimation) => screen,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(1.0, 0.0);
