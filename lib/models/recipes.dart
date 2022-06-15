@@ -61,7 +61,8 @@ Future<RecipesModel> fetchRecipes(String endpoint) async {
   if (response.statusCode == 200) {
     return RecipesModel.fromJson(jsonDecode(response.body));
   } else {
-    throw Exception('Failed to load recipes');
+    return RecipesModel.fromJson({"results":[]});
+    // throw Exception('Failed to load recipes');
   }
 }
 
