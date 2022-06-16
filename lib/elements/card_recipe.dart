@@ -81,6 +81,18 @@ class CardRecipe extends StatelessWidget{
                               child: const Icon(Icons.image_not_supported_outlined),
                             );
                           },
+                          loadingBuilder: (BuildContext context, Widget child,ImageChunkEvent? loadingProgress){
+                            if(loadingProgress==null){
+                              return child;
+                            }else {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value:loadingProgress.expectedTotalBytes!=null?loadingProgress.cumulativeBytesLoaded/loadingProgress.expectedTotalBytes!:null,
+                                  color: const Color.fromARGB(255, 119, 18, 214)
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ),
                     ),
